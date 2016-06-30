@@ -5,12 +5,22 @@
  */
 package sendmarks;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -19,7 +29,10 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JFileChooser;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 
@@ -34,13 +47,136 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 public class SendMarksGUI extends javax.swing.JFrame {
 
+  public class PopupListener extends MouseAdapter {
+
+    public void mousePressed(MouseEvent e) {
+      maybeShowPopup(e);
+    }
+
+    public void mouseReleased(MouseEvent e) {
+      maybeShowPopup(e);
+    }
+
+    private void maybeShowPopup(MouseEvent e) {
+      if (e.isPopupTrigger()) {
+        jPopupMenuEdit.show(e.getComponent(),
+          e.getX(), e.getY());
+      }
+    }
+  }
   /**
    * Creates new form SendMarksGUI
    */
   public SendMarksGUI() {
     initComponents();
-    m_strCWD = "/Users/jcur002/curran/Work/2016/Teaching/779/Assignments/A3/Marks/MarksAss3";
+    
+    jPopupMenuEdit = new javax.swing.JPopupMenu();
+    jPMICopy = new javax.swing.JMenuItem("Copy");
+
+    jPMICopy.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent evt) {
+        jPMICopyActionPerformed(evt);
+      }
+    });
+
+    jPMICopy.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.META_MASK));
+
+
+    jPopupMenuEdit.add(jPMICopy);
+
+    MouseListener popupListener = new PopupListener();
+    jtaActivityLog.addMouseListener(popupListener);
+    //m_strCWD = "/Users/jcur002/curran/Work/2016/Teaching/779/Assignments/A3/Marks/MarksAss3";
+    m_strCWD = "/Users/jcur002/Dropbox/Work/2016/Teaching/779/MarksAss3";
     jlabCurrentDirectory.setText(m_strCWD);
+    
+    readCSS("\t\t");
+    readStudentDetails();
+  }
+  
+  private String fillDetails(String strTag, String strFmtData, String strDetails){
+    StringBuilder sb = new StringBuilder();
+  
+    sb.append("(?s)(.*)").append(strTag).append("(.*$)");
+    
+    String strPattern = sb.toString();
+    Pattern p = Pattern.compile(strPattern);
+    Matcher m = p.matcher(strDetails);
+    
+    
+    if(!m.find()){
+      System.out.println("Couldn't find pattern: " + strPattern);
+    }
+    
+    sb = new StringBuilder();
+    sb.append("$1").append(strFmtData).append("$2");
+    String strReplace = sb.toString();
+    
+    return strDetails.replaceAll(strPattern, strReplace);
+  }
+  
+  private String completeStudentDetails(String strDetails, Object[] studentData){
+    String strStudentDetails = fillDetails("ASSNUM", (String)studentData[0], strDetails);
+    strStudentDetails = fillDetails("STUDENTNAME", (String)studentData[1], strStudentDetails);
+    strStudentDetails = fillDetails("STUDENTUPI", (String)studentData[2], strStudentDetails);
+    strStudentDetails = fillDetails("STUDENTEMAIL", String.format("%s@aucklanduni.ac.nz", (String)studentData[2]),strStudentDetails);
+
+    double finalMark = (Double)studentData[3];
+    double totalMark = (Double)studentData[4];
+    double percentMark = (Double)studentData[5];
+    
+    String strFinalMark = ((finalMark - Math.floor(finalMark)) > 0.1) ? String.format("%4.1f", Math.floor(finalMark)) : 
+                         String.format("%d", (int)finalMark);
+
+    String strTotalMark = ((totalMark - Math.floor(totalMark)) > 0.1) ? String.format("%4.1f", Math.floor(totalMark)) : 
+                         String.format("%d", (int)totalMark);
+
+    String strPercentMark = String.format("%5.2f", percentMark);
+
+    strStudentDetails = fillDetails("YOURMARK", strFinalMark, strStudentDetails);
+    strStudentDetails = fillDetails("TOTALMARK", strTotalMark, strStudentDetails);
+    strStudentDetails = fillDetails("PERCENTMARK", strPercentMark, strStudentDetails);
+    
+    return strStudentDetails;
+  }
+  
+  void readCSS(String indent){
+    InputStream in = getClass().getResourceAsStream("HTMLResources/assignment.css"); 
+    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+    StringBuilder sb = new StringBuilder();
+    
+    try{
+      String line = reader.readLine();
+      
+      while(line != null){
+        sb.append(indent).append(line).append('\n');
+        line = reader.readLine();
+      }
+    }catch(IOException ex){
+      ex.printStackTrace();
+    }
+    
+    strCSS = sb.toString();
+  }
+  
+  void readStudentDetails(){
+    InputStream in = getClass().getResourceAsStream("HTMLResources/studentDetails.html"); 
+    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+    StringBuilder sb = new StringBuilder();
+    
+    try{
+      String line = reader.readLine();
+      
+      while(line != null){
+        sb.append(line).append('\n');
+        line = reader.readLine();
+      }
+    }catch(IOException ex){
+      ex.printStackTrace();
+    }
+    
+    strStudentDetails = sb.toString();
   }
 
   /**
@@ -62,7 +198,7 @@ public class SendMarksGUI extends javax.swing.JFrame {
     jbConvert = new javax.swing.JButton();
     jbFixFileNames = new javax.swing.JButton();
     jbSendMarks = new javax.swing.JButton();
-    jButton2 = new javax.swing.JButton();
+    jbScrapeGrades = new javax.swing.JButton();
     jcbColumn = new javax.swing.JComboBox<>();
     jspinRow = new javax.swing.JSpinner();
     jLabel4 = new javax.swing.JLabel();
@@ -107,7 +243,12 @@ public class SendMarksGUI extends javax.swing.JFrame {
       }
     });
 
-    jButton2.setText("Scrape Grades");
+    jbScrapeGrades.setText("Scrape Grades");
+    jbScrapeGrades.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jbScrapeGradesActionPerformed(evt);
+      }
+    });
 
     jcbColumn.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "A", "B", "C", "D", "E" }));
     jcbColumn.setSelectedIndex(3);
@@ -139,7 +280,7 @@ public class SendMarksGUI extends javax.swing.JFrame {
               .addGroup(layout.createSequentialGroup()
                 .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                  .addComponent(jButton2)
+                  .addComponent(jbScrapeGrades)
                   .addComponent(jbConvert)
                   .addComponent(jbSendMarks))
                 .addGap(18, 18, 18)
@@ -216,7 +357,7 @@ public class SendMarksGUI extends javax.swing.JFrame {
                 .addComponent(jLabel5)))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-              .addComponent(jButton2)
+              .addComponent(jbScrapeGrades)
               .addComponent(jcbColumn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
               .addComponent(jspinRow, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
           .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 473, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -232,6 +373,18 @@ public class SendMarksGUI extends javax.swing.JFrame {
     pack();
   }// </editor-fold>//GEN-END:initComponents
 
+  private void jMenuItemCopyActionPerformed(java.awt.event.ActionEvent evt) {                                              
+    String strFormatted = jtaActivityLog.getText();
+    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+    clipboard.setContents(new StringSelection(strFormatted), null);
+  }                                             
+
+  private void jPMICopyActionPerformed(ActionEvent evt) {
+    String strFormatted = jtaActivityLog.getText();
+    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+    clipboard.setContents(new StringSelection(strFormatted), null);
+  }
+  
   private void jbChangeDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbChangeDirActionPerformed
     // TODO add your handling code here:
     JFileChooser fc = new JFileChooser();
@@ -282,37 +435,136 @@ public class SendMarksGUI extends javax.swing.JFrame {
           Logger.getLogger(SendMarksGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        XSSFSheet worksheet = workbook.getSheetAt(0);
+        
+        
+        /*XSSFSheet worksheet = workbook.getSheetAt(0);
         XSSFRow row; 
         XSSFCell cell;
 
         row = worksheet.getRow(0);
-        cell = row.getCell(1);
+        cell = row.getCell(1);*/
         
-        int markRangeIdx = workbook.getNameIndex("MarkRange");
+               
+        int nameRangeIdx = workbook.getNameIndex("Name");      
+        int markRangeIdx = workbook.getNameIndex("Marks");
+        int finalMarkRangeIdx = workbook.getNameIndex("FinalMark");
+        
+        Name nameRange = workbook.getNameAt(nameRangeIdx);
         Name markRange = workbook.getNameAt(markRangeIdx);
+        Name finalMarkRange = workbook.getNameAt(finalMarkRangeIdx);
 
         // retrieve the cell at the named range and test its contents
-        AreaReference aref = new AreaReference(markRange.getRefersToFormula());
+        AreaReference aref = new AreaReference(nameRange.getRefersToFormula());
         CellReference[] crefs = aref.getAllReferencedCells();
-        for (int i=0; i < crefs.length; i++) {
-            /*Sheet s = wb.getSheet(crefs[i].getSheetName());
-            Row r = sheet.getRow(crefs[i].getRow());
-            Cell c = r.getCell(crefs[i].getCol());
-            // extract the cell contents based on cell type etc.*/
+        
+        Sheet sheet = workbook.getSheet(crefs[0].getSheetName());
+        Row r = sheet.getRow(crefs[0].getRow());
+        Cell c = r.getCell(crefs[0].getCol());
+        String strStudentName = c.getStringCellValue();
+        
+        sheet = workbook.getSheet(crefs[1].getSheetName());
+        r = sheet.getRow(crefs[1].getRow());
+        c = r.getCell(crefs[1].getCol());
+        String strStudentUPI = c.getStringCellValue();
+        
+        aref = new AreaReference(finalMarkRange.getRefersToFormula());
+        crefs = aref.getAllReferencedCells();
+        double totalMark = 0;
+        double finalMark = 0;
+        double percentMark = 0;
+        
+        for(int i = 0; i < 2; i++){
+          sheet = workbook.getSheet(crefs[i].getSheetName());
+          r = sheet.getRow(crefs[i].getRow());
+          c = r.getCell(crefs[i].getCol());
+          
+          if(i == 0){
+            totalMark = c.getNumericCellValue();
+          }else{
+            finalMark = c.getNumericCellValue();
+          }
         }
+        
+        percentMark = 100 * finalMark / totalMark;
+        
+        
+        
+        aref = new AreaReference(markRange.getRefersToFormula());
+        crefs = aref.getAllReferencedCells();
+        
+        int numRows = aref.getLastCell().getRow() - aref.getFirstCell().getRow() + 1;
+        int numCols = aref.getLastCell().getCol() - aref.getFirstCell().getCol() + 1;
+        
+        Object[][] markTable = new Object[numRows][];
+  
+        for(int row = 0; row  < numRows; row++){
+          
+          markTable[row] = new Object[numCols];
+          
+          for(int col = 0; col < numCols; col++){
+            int idx = row * numCols + col;
+           
+            CellReference cr = crefs[idx];
+            sheet = workbook.getSheet(cr.getSheetName());
+            r = sheet.getRow(cr.getRow());
+            c = r.getCell(cr.getCol());
             
+            if(c != null){
+              int cellType = c.getCellType();
+              
+              switch(cellType){
+                case XSSFCell.CELL_TYPE_STRING:
+                  markTable[row][col] = c.getStringCellValue();
+                  break;
+                case XSSFCell.CELL_TYPE_NUMERIC:
+                case XSSFCell.CELL_TYPE_FORMULA:
+                  double d = c.getNumericCellValue();
+                  if(d - Math.floor(d) < 0.01)
+                    markTable[row][col] = (int)d;
+                  else
+                    markTable[row][col] = d;
+                  break;
+                case XSSFCell.CELL_TYPE_BLANK:
+                  markTable[row][col] = "";
+                  break;
+                default:
+                  markTable[row][col] = "";
+                  break;
+              }
+             }
+          }
+        }
+        
+        
+        Object[] studentData = {(String)jcbAssignmentNumber.getSelectedItem(),
+                                strStudentName, strStudentUPI, 
+                                finalMark, totalMark, percentMark};
+        strStudentDetails = completeStudentDetails(strStudentDetails, studentData);
+        HTMLMarksheet ms = new HTMLMarksheet((String)jcbAssignmentNumber.getSelectedItem(), 
+                                             strCSS, strStudentDetails,
+                                             markTable);
+        
+        //ms.send();
+        try{
+          ms.write(m_strCWD + "/test.html");
+        }catch(IOException ex){
+          ex.printStackTrace();
+        }
         
         String strNetID = m.group("netid");
         String strEmail = strNetID + "@aucklanduni.ac.nz";
-        strLog += "Sending mail to " + cell.getStringCellValue() + "\n";
-        jtaActivityLog.setText(strLog); 
+        strLog += "Sending mail to " + strStudentName + "\n";
+        jtaActivityLog.setText(ms.toString()); 
         
         
       }
     }
     
   }//GEN-LAST:event_jbSendMarksActionPerformed
+
+  private void jbScrapeGradesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbScrapeGradesActionPerformed
+    // TODO add your handling code here:
+  }//GEN-LAST:event_jbScrapeGradesActionPerformed
 
   /**
    * @param args the command line arguments
@@ -350,9 +602,15 @@ public class SendMarksGUI extends javax.swing.JFrame {
   }
   
   private String m_strCWD;
+  private String strCSS;
+  private String strStudentDetails;
+  
+  private javax.swing.JPopupMenu jPopupMenuEdit;
+  private javax.swing.JMenuItem jPMIClear;
+  private javax.swing.JMenuItem jPMICopy;
+  private javax.swing.JMenuItem jPMIPaste;
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
-  private javax.swing.JButton jButton2;
   private javax.swing.JLabel jLabel1;
   private javax.swing.JLabel jLabel2;
   private javax.swing.JLabel jLabel3;
@@ -365,6 +623,7 @@ public class SendMarksGUI extends javax.swing.JFrame {
   private javax.swing.JButton jbChangeDir;
   private javax.swing.JButton jbConvert;
   private javax.swing.JButton jbFixFileNames;
+  private javax.swing.JButton jbScrapeGrades;
   private javax.swing.JButton jbSendMarks;
   private javax.swing.JComboBox<String> jcbAssignmentNumber;
   private javax.swing.JComboBox<String> jcbColumn;

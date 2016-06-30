@@ -1,0 +1,87 @@
+.numberCircle {
+    border-radius: 50%;
+    behavior: url(PIE.htc); /* remove if you don't care about IE8 */
+
+    width: 36px;
+    height: 36px;
+    padding: 8px;
+
+    background: #fff;
+    border: 2px solid red;
+    color: #666;
+    text-align: center;
+
+    font: 32px Arial, sans-serif;
+}
+
+.assignment-box table{
+    width:100%;
+    line-height:inherit;
+
+}
+
+.assignment-box table td{
+    padding:5px;
+    vertical-align:middle;
+}
+.assignment-box table tr.information table td{
+    padding-bottom:40px;
+}
+
+.assignment-box table tr.heading td{
+    background:#eeeeee;
+    border-bottom:1px solid #dddddd;
+    font-weight:bold;
+    text-align: left;
+}
+
+
+.assignment-box table tr.qheader td{
+    border-bottom:2px solid #eeeeee;
+    font-weight: bold;
+}
+
+.assignment-box table td.qcomment{
+    font-weight: bold;
+    text-align: center;
+    padding-right: 5px;
+}
+
+.assignment-box table tr td:nth-child(1){
+    text-align: left;
+}
+
+.assignment-box table tr.total td{
+    border-top:2px solid #eeeeee;
+    font-weight:bold;
+}
+
+.assignment-box table tr.total td:nth-child(1){
+    text-align: right;
+}
+.assignment-box{
+    max-width:800px;
+    margin:auto;
+    padding:30px;
+    border:1px solid #eeeeee;
+    box-shadow:0 0 10px rgba(0, 0, 0, .15);
+    font-size:16px;
+    line-height:24px;
+    font-family:'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+    color:#555;
+}
+
+.assignment-box table tr td{
+    text-align: center;
+}
+
+
+@media only screen and (max-width: 600px) {
+    .assignment-box table tr.top table td{
+        width:100%;
+        display:block;
+        text-align:left;
+    }
+
+}
+

@@ -30,7 +30,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jButton2" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jbScrapeGrades" min="-2" max="-2" attributes="0"/>
                                   <Component id="jbConvert" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="jbSendMarks" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
@@ -130,7 +130,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jButton2" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jbScrapeGrades" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jcbColumn" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jspinRow" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -228,10 +228,13 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jbSendMarksActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="jButton2">
+    <Component class="javax.swing.JButton" name="jbScrapeGrades">
       <Properties>
         <Property name="text" type="java.lang.String" value="Scrape Grades"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jbScrapeGradesActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JComboBox" name="jcbColumn">
       <Properties>
