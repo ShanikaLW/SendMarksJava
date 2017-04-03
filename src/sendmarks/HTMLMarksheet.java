@@ -60,14 +60,20 @@ public class HTMLMarksheet {
     return strSheet;
   }
   
-  public void send(String strMessage){
+  public void send(String strSubject, String strRecipient, boolean bJames){
     // Recipient's email ID needs to be mentioned.
-    String to = "james.m.curran@gmail.com";
+    String to = strRecipient; //"james.m.curran@gmail.com";
 
     // Sender's email ID needs to be mentioned
-    String from = "j.curran@auckland.ac.nz";
+    String from;
+    if(bJames){
+      from = "j.curran@auckland.ac.nz";
+    }else{
+      from = "d.scott@auckland.ac.nz";
+    }
+    
     final String username = "jcur002";//change accordingly
-    final String password = "aqz4@lie";//change accordingly
+    final String password = "aqz5@lie";//change accordingly
 
      String host = "mailhost.auckland.ac.nz";
 
@@ -97,10 +103,10 @@ public class HTMLMarksheet {
         InternetAddress.parse(to));
 
       // Set Subject: header field
-      message.setSubject("Testing Subject");
+      message.setSubject(strSubject);
 
       // Send the actual HTML message, as big as you like
-      message.setContent(strMessage, "text/html");
+      message.setContent(strSheet, "text/html");
 
       // Send message
       Transport.send(message);

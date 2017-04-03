@@ -70,6 +70,9 @@ public class SendMarksGUI extends javax.swing.JFrame {
   public SendMarksGUI() {
     initComponents();
     
+    jcbDummyRun.setSelected(true);
+    bDummyRun = true;
+    
     jPopupMenuEdit = new javax.swing.JPopupMenu();
     jPMICopy = new javax.swing.JMenuItem("Copy");
 
@@ -88,8 +91,14 @@ public class SendMarksGUI extends javax.swing.JFrame {
     MouseListener popupListener = new PopupListener();
     jtaActivityLog.addMouseListener(popupListener);
     //m_strCWD = "/Users/jcur002/curran/Work/2016/Teaching/779/Assignments/A3/Marks/MarksAss3";
-    m_strCWD = "/Users/jcur002/Dropbox/Work/2016/Teaching/779/MarksAss3";
+    m_strCWD = "/Users/jcur002/Dropbox/Work/2017/Teaching/779/Assignments/A1/Marks";
     jlabCurrentDirectory.setText(m_strCWD);
+    
+    jtfNameRange.setInputVerifier(new RangeInputVerifier());
+    jtfMarkRange.setInputVerifier(new RangeInputVerifier());
+    jtfFinalMarkRange.setInputVerifier(new RangeInputVerifier());
+    
+    
     
     readCSS("\t\t");
     readStudentDetails();
@@ -187,16 +196,12 @@ public class SendMarksGUI extends javax.swing.JFrame {
   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
   private void initComponents() {
 
-    jScrollPane1 = new javax.swing.JScrollPane();
-    jtaMessageContent = new javax.swing.JTextArea();
-    jLabel1 = new javax.swing.JLabel();
+    jrbGroup1 = new javax.swing.ButtonGroup();
     jtfSubjectLine = new javax.swing.JTextField();
     jLabel2 = new javax.swing.JLabel();
     jLabel3 = new javax.swing.JLabel();
     jcbAssignmentNumber = new javax.swing.JComboBox<>();
     jbChangeDir = new javax.swing.JButton();
-    jbConvert = new javax.swing.JButton();
-    jbFixFileNames = new javax.swing.JButton();
     jbSendMarks = new javax.swing.JButton();
     jbScrapeGrades = new javax.swing.JButton();
     jcbColumn = new javax.swing.JComboBox<>();
@@ -208,22 +213,33 @@ public class SendMarksGUI extends javax.swing.JFrame {
     jLabel6 = new javax.swing.JLabel();
     jLabel7 = new javax.swing.JLabel();
     jlabCurrentDirectory = new javax.swing.JLabel();
+    jLabel1 = new javax.swing.JLabel();
+    jLabel8 = new javax.swing.JLabel();
+    jLabel9 = new javax.swing.JLabel();
+    jtfMarkRange = new javax.swing.JTextField();
+    jLabel10 = new javax.swing.JLabel();
+    jcbSheetNumber = new javax.swing.JComboBox<>();
+    jtfNameRange = new javax.swing.JTextField();
+    jtfFinalMarkRange = new javax.swing.JTextField();
+    jrbJames = new javax.swing.JRadioButton();
+    jLabel11 = new javax.swing.JLabel();
+    jrbDavid = new javax.swing.JRadioButton();
+    jcbDummyRun = new javax.swing.JCheckBox();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-    jtaMessageContent.setColumns(20);
-    jtaMessageContent.setRows(5);
-    jScrollPane1.setViewportView(jtaMessageContent);
-
-    jLabel1.setText("Enter your message here");
-
-    jtfSubjectLine.setText("Assignment Marks");
+    jtfSubjectLine.setText("STATS 779 Assignment Marks");
 
     jLabel2.setText("Enter your subject line here");
 
     jLabel3.setText("Assignment Number");
 
     jcbAssignmentNumber.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5" }));
+    jcbAssignmentNumber.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jcbAssignmentNumberActionPerformed(evt);
+      }
+    });
 
     jbChangeDir.setText("Change Directory");
     jbChangeDir.addActionListener(new java.awt.event.ActionListener() {
@@ -231,10 +247,6 @@ public class SendMarksGUI extends javax.swing.JFrame {
         jbChangeDirActionPerformed(evt);
       }
     });
-
-    jbConvert.setText("Convert to PDF");
-
-    jbFixFileNames.setText("Fix filenames");
 
     jbSendMarks.setText("Send Marks");
     jbSendMarks.addActionListener(new java.awt.event.ActionListener() {
@@ -269,6 +281,43 @@ public class SendMarksGUI extends javax.swing.JFrame {
 
     jlabCurrentDirectory.setText("(None)");
 
+    jLabel1.setText("Name Range:");
+
+    jLabel8.setText("Mark Range:");
+
+    jLabel9.setText("Final Mark Range:");
+
+    jtfMarkRange.setText("$A$4:$E$24");
+
+    jLabel10.setText("Sheet:");
+
+    jcbSheetNumber.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3" }));
+
+    jtfNameRange.setText("$B$1:$B$2");
+    jtfNameRange.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jtfNameRangeActionPerformed(evt);
+      }
+    });
+
+    jtfFinalMarkRange.setText("$C$25:$D$25");
+
+    jrbGroup1.add(jrbJames);
+    jrbJames.setText("James");
+
+    jLabel11.setText("Contact Person:");
+
+    jrbGroup1.add(jrbDavid);
+    jrbDavid.setText("David");
+
+    jcbDummyRun.setSelected(true);
+    jcbDummyRun.setText("Dummy Run");
+    jcbDummyRun.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jcbDummyRunActionPerformed(evt);
+      }
+    });
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
@@ -276,52 +325,66 @@ public class SendMarksGUI extends javax.swing.JFrame {
       .addGroup(layout.createSequentialGroup()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addGroup(layout.createSequentialGroup()
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-              .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                  .addComponent(jbScrapeGrades)
-                  .addComponent(jbConvert)
-                  .addComponent(jbSendMarks))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                  .addComponent(jLabel4)
-                  .addComponent(jcbColumn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                  .addComponent(jspinRow, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                  .addComponent(jLabel5)))
-              .addGroup(layout.createSequentialGroup()
-                .addGap(180, 180, 180)
-                .addComponent(jbFixFileNames))
-              .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                  .addComponent(jtfSubjectLine)
-                  .addComponent(jLabel1)
-                  .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 485, Short.MAX_VALUE)))
-              .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jcbAssignmentNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-              .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addComponent(jbChangeDir))
-              .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addComponent(jLabel2)))
-            .addGap(18, 18, 18)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-              .addComponent(jLabel6)
-              .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 465, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGap(0, 15, Short.MAX_VALUE))
-          .addGroup(layout.createSequentialGroup()
             .addContainerGap()
             .addComponent(jLabel7)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(jlabCurrentDirectory, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+            .addComponent(jlabCurrentDirectory, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+          .addGroup(layout.createSequentialGroup()
+            .addGap(16, 16, 16)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+              .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                  .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                  .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                  .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                  .addComponent(jtfMarkRange)
+                  .addComponent(jtfNameRange)
+                  .addComponent(jtfFinalMarkRange))
+                .addGap(245, 245, 245))
+              .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                  .addComponent(jtfSubjectLine, javax.swing.GroupLayout.PREFERRED_SIZE, 485, javax.swing.GroupLayout.PREFERRED_SIZE)
+                  .addComponent(jLabel2)
+                  .addGroup(layout.createSequentialGroup()
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                      .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jcbAssignmentNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                      .addComponent(jbChangeDir)
+                      .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jcbSheetNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGap(121, 121, 121)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                      .addComponent(jrbDavid)
+                      .addComponent(jrbJames)
+                      .addComponent(jLabel11))))
+                .addGap(0, 26, Short.MAX_VALUE)))
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+              .addComponent(jLabel6)
+              .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 465, javax.swing.GroupLayout.PREFERRED_SIZE)
+              .addGroup(layout.createSequentialGroup()
+                .addComponent(jbSendMarks)
+                .addGap(18, 18, 18)
+                .addComponent(jcbDummyRun)))
+            .addGap(39, 39, 39)))
         .addContainerGap())
+      .addGroup(layout.createSequentialGroup()
+        .addContainerGap()
+        .addComponent(jbScrapeGrades)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(jLabel4)
+          .addComponent(jcbColumn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        .addGap(18, 18, 18)
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(jspinRow, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(jLabel5))
+        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -331,41 +394,59 @@ public class SendMarksGUI extends javax.swing.JFrame {
           .addComponent(jLabel2)
           .addComponent(jLabel6))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+          .addGroup(layout.createSequentialGroup()
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(27, 27, 27)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+              .addComponent(jbSendMarks)
+              .addComponent(jcbDummyRun)))
           .addGroup(layout.createSequentialGroup()
             .addComponent(jtfSubjectLine, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-            .addComponent(jLabel1)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGap(18, 18, 18)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
               .addComponent(jLabel3)
-              .addComponent(jcbAssignmentNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+              .addComponent(jcbAssignmentNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+              .addComponent(jLabel11))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(jbChangeDir)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
               .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                  .addComponent(jbFixFileNames)
-                  .addComponent(jbConvert, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jbSendMarks))
-              .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                .addComponent(jLabel4)
-                .addComponent(jLabel5)))
+                .addComponent(jbChangeDir)
+                .addGap(12, 12, 12)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                  .addComponent(jLabel10)
+                  .addComponent(jcbSheetNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                  .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                  .addComponent(jtfNameRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(11, 11, 11)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                  .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                  .addComponent(jtfMarkRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+              .addGroup(layout.createSequentialGroup()
+                .addComponent(jrbJames)
+                .addGap(8, 8, 8)
+                .addComponent(jrbDavid)))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+              .addComponent(jLabel9)
+              .addComponent(jtfFinalMarkRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGap(6, 6, 6)))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+          .addComponent(jbScrapeGrades)
+          .addGroup(layout.createSequentialGroup()
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+              .addComponent(jLabel4)
+              .addComponent(jLabel5))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-              .addComponent(jbScrapeGrades)
               .addComponent(jcbColumn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-              .addComponent(jspinRow, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-          .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 473, javax.swing.GroupLayout.PREFERRED_SIZE))
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addGroup(layout.createSequentialGroup()
-            .addComponent(jLabel7)
-            .addGap(0, 0, Short.MAX_VALUE))
+              .addComponent(jspinRow, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+          .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addComponent(jlabCurrentDirectory, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         .addContainerGap())
     );
@@ -444,17 +525,23 @@ public class SendMarksGUI extends javax.swing.JFrame {
         row = worksheet.getRow(0);
         cell = row.getCell(1);*/
         
-               
-        int nameRangeIdx = workbook.getNameIndex("Name");      
+        /*int nameRangeIdx = workbook.getNameIndex("Name");      
         int markRangeIdx = workbook.getNameIndex("Marks");
         int finalMarkRangeIdx = workbook.getNameIndex("FinalMark");
         
         Name nameRange = workbook.getNameAt(nameRangeIdx);
         Name markRange = workbook.getNameAt(markRangeIdx);
-        Name finalMarkRange = workbook.getNameAt(finalMarkRangeIdx);
+        Name finalMarkRange = workbook.getNameAt(finalMarkRangeIdx);*/
+        
+        String strSheetName = "Sheet" + jcbSheetNumber.getSelectedItem();
+        String strNameRange = strSheetName + "!" + jtfNameRange.getText();
+        String strMarkRange = strSheetName + "!" + jtfMarkRange.getText();
+        String strFinalMarkRange = strSheetName + "!" + jtfFinalMarkRange.getText();
 
         // retrieve the cell at the named range and test its contents
-        AreaReference aref = new AreaReference(nameRange.getRefersToFormula());
+        //AreaReference aref = new AreaReference(nameRange.getRefersToFormula());
+        //AreaReference aref = new AreaReference("Sheet1!$B$1:$B$2");
+        AreaReference aref = new AreaReference(strNameRange);
         CellReference[] crefs = aref.getAllReferencedCells();
         
         Sheet sheet = workbook.getSheet(crefs[0].getSheetName());
@@ -467,7 +554,9 @@ public class SendMarksGUI extends javax.swing.JFrame {
         c = r.getCell(crefs[1].getCol());
         String strStudentUPI = c.getStringCellValue();
         
-        aref = new AreaReference(finalMarkRange.getRefersToFormula());
+        //aref = new AreaReference(finalMarkRange.getRefersToFormula());
+        //aref = new AreaReference("Sheet1!$C$25:$D$25");
+        aref = new AreaReference(strFinalMarkRange);
         crefs = aref.getAllReferencedCells();
         double totalMark = 0;
         double finalMark = 0;
@@ -489,7 +578,9 @@ public class SendMarksGUI extends javax.swing.JFrame {
         
         
         
-        aref = new AreaReference(markRange.getRefersToFormula());
+        //aref = new AreaReference(markRange.getRefersToFormula());
+        //aref = new AreaReference("Sheet1!$A$4:$E$24");
+        aref = new AreaReference(strMarkRange);
         crefs = aref.getAllReferencedCells();
         
         int numRows = aref.getLastCell().getRow() - aref.getFirstCell().getRow() + 1;
@@ -539,22 +630,28 @@ public class SendMarksGUI extends javax.swing.JFrame {
         Object[] studentData = {(String)jcbAssignmentNumber.getSelectedItem(),
                                 strStudentName, strStudentUPI, 
                                 finalMark, totalMark, percentMark};
+        readStudentDetails();
         strStudentDetails = completeStudentDetails(strStudentDetails, studentData);
         HTMLMarksheet ms = new HTMLMarksheet((String)jcbAssignmentNumber.getSelectedItem(), 
                                              strCSS, strStudentDetails,
                                              markTable);
         
-        //ms.send();
+       
         try{
-          ms.write(m_strCWD + "/test.html");
+          ms.write(m_strCWD + "/test/" + strStudentUPI + ".html");
         }catch(IOException ex){
           ex.printStackTrace();
         }
         
         String strNetID = m.group("netid");
         String strEmail = strNetID + "@aucklanduni.ac.nz";
-        strLog += "Sending mail to " + strStudentName + "\n";
-        jtaActivityLog.setText(ms.toString()); 
+        if(!bDummyRun){
+          strLog += "Sending mail to " + strEmail + "\n";  
+          ms.send(jtfSubjectLine.getText(), strEmail, false);
+        }else{
+          strLog += "Pretending to send mail to " + strEmail + "\n";
+        }
+        jtaActivityLog.setText(strLog); 
         
         
       }
@@ -565,6 +662,21 @@ public class SendMarksGUI extends javax.swing.JFrame {
   private void jbScrapeGradesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbScrapeGradesActionPerformed
     // TODO add your handling code here:
   }//GEN-LAST:event_jbScrapeGradesActionPerformed
+
+  private void jcbAssignmentNumberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbAssignmentNumberActionPerformed
+    StringBuilder sb = new StringBuilder();
+    
+    sb.append("STATS 779 Assignment ").append(jcbAssignmentNumber.getSelectedItem()).append(" Marks");
+    jtfSubjectLine.setText(sb.toString());
+  }//GEN-LAST:event_jcbAssignmentNumberActionPerformed
+
+  private void jcbDummyRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbDummyRunActionPerformed
+    bDummyRun = jcbDummyRun.isSelected();
+  }//GEN-LAST:event_jcbDummyRunActionPerformed
+
+  private void jtfNameRangeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtfNameRangeActionPerformed
+    // TODO add your handling code here:
+  }//GEN-LAST:event_jtfNameRangeActionPerformed
 
   /**
    * @param args the command line arguments
@@ -601,6 +713,8 @@ public class SendMarksGUI extends javax.swing.JFrame {
     });
   }
   
+  private boolean bDummyRun;
+  
   private String m_strCWD;
   private String strCSS;
   private String strStudentDetails;
@@ -612,25 +726,33 @@ public class SendMarksGUI extends javax.swing.JFrame {
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JLabel jLabel1;
+  private javax.swing.JLabel jLabel10;
+  private javax.swing.JLabel jLabel11;
   private javax.swing.JLabel jLabel2;
   private javax.swing.JLabel jLabel3;
   private javax.swing.JLabel jLabel4;
   private javax.swing.JLabel jLabel5;
   private javax.swing.JLabel jLabel6;
   private javax.swing.JLabel jLabel7;
-  private javax.swing.JScrollPane jScrollPane1;
+  private javax.swing.JLabel jLabel8;
+  private javax.swing.JLabel jLabel9;
   private javax.swing.JScrollPane jScrollPane2;
   private javax.swing.JButton jbChangeDir;
-  private javax.swing.JButton jbConvert;
-  private javax.swing.JButton jbFixFileNames;
   private javax.swing.JButton jbScrapeGrades;
   private javax.swing.JButton jbSendMarks;
   private javax.swing.JComboBox<String> jcbAssignmentNumber;
   private javax.swing.JComboBox<String> jcbColumn;
+  private javax.swing.JCheckBox jcbDummyRun;
+  private javax.swing.JComboBox<String> jcbSheetNumber;
   private javax.swing.JLabel jlabCurrentDirectory;
+  private javax.swing.JRadioButton jrbDavid;
+  private javax.swing.ButtonGroup jrbGroup1;
+  private javax.swing.JRadioButton jrbJames;
   private javax.swing.JSpinner jspinRow;
   private javax.swing.JTextArea jtaActivityLog;
-  private javax.swing.JTextArea jtaMessageContent;
+  private javax.swing.JTextField jtfFinalMarkRange;
+  private javax.swing.JTextField jtfMarkRange;
+  private javax.swing.JTextField jtfNameRange;
   private javax.swing.JTextField jtfSubjectLine;
   // End of variables declaration//GEN-END:variables
 }
