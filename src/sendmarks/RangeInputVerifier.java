@@ -9,6 +9,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.InputVerifier;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 /**
@@ -63,7 +66,9 @@ public class RangeInputVerifier extends InputVerifier{
         throw new SheetRangeException(strRangeTxt + " is not in the $R1$C1:$R2$C2 format");
       }
     }catch(SheetRangeException e){
-      e.printStackTrace();
+      JPanel parent = (JPanel)input.getParent();
+      JOptionPane.showMessageDialog(parent, e.getMessage());
+      
       return false;
      }
   } 

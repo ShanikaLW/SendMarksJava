@@ -75,7 +75,7 @@ public class HTMLMarksheet {
     final String username = "jcur002";//change accordingly
     final String password = "aqz5@lie";//change accordingly
 
-     String host = "mailhost.auckland.ac.nz";
+    String host = "mailhost.auckland.ac.nz";
 
     Properties props = new Properties();
     props.put("mail.smtp.auth", "true");

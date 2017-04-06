@@ -196,7 +196,6 @@ public class SendMarksGUI extends javax.swing.JFrame {
   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
   private void initComponents() {
 
-    jrbGroup1 = new javax.swing.ButtonGroup();
     jtfSubjectLine = new javax.swing.JTextField();
     jLabel2 = new javax.swing.JLabel();
     jLabel3 = new javax.swing.JLabel();
@@ -221,10 +220,11 @@ public class SendMarksGUI extends javax.swing.JFrame {
     jcbSheetNumber = new javax.swing.JComboBox<>();
     jtfNameRange = new javax.swing.JTextField();
     jtfFinalMarkRange = new javax.swing.JTextField();
-    jrbJames = new javax.swing.JRadioButton();
-    jLabel11 = new javax.swing.JLabel();
-    jrbDavid = new javax.swing.JRadioButton();
     jcbDummyRun = new javax.swing.JCheckBox();
+    jMenuBar1 = new javax.swing.JMenuBar();
+    jmenuSetup = new javax.swing.JMenu();
+    jMenuItemConfigure = new javax.swing.JMenuItem();
+    jMenu2 = new javax.swing.JMenu();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -302,14 +302,6 @@ public class SendMarksGUI extends javax.swing.JFrame {
 
     jtfFinalMarkRange.setText("$C$25:$D$25");
 
-    jrbGroup1.add(jrbJames);
-    jrbJames.setText("James");
-
-    jLabel11.setText("Contact Person:");
-
-    jrbGroup1.add(jrbDavid);
-    jrbDavid.setText("David");
-
     jcbDummyRun.setSelected(true);
     jcbDummyRun.setText("Dummy Run");
     jcbDummyRun.addActionListener(new java.awt.event.ActionListener() {
@@ -317,6 +309,23 @@ public class SendMarksGUI extends javax.swing.JFrame {
         jcbDummyRunActionPerformed(evt);
       }
     });
+
+    jmenuSetup.setText("Setup");
+
+    jMenuItemConfigure.setText("Configure...");
+    jMenuItemConfigure.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jMenuItemConfigureActionPerformed(evt);
+      }
+    });
+    jmenuSetup.add(jMenuItemConfigure);
+
+    jMenuBar1.add(jmenuSetup);
+
+    jMenu2.setText("Edit");
+    jMenuBar1.add(jMenu2);
+
+    setJMenuBar(jMenuBar1);
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
@@ -347,22 +356,16 @@ public class SendMarksGUI extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                   .addComponent(jtfSubjectLine, javax.swing.GroupLayout.PREFERRED_SIZE, 485, javax.swing.GroupLayout.PREFERRED_SIZE)
                   .addComponent(jLabel2)
-                  .addGroup(layout.createSequentialGroup()
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                      .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jcbAssignmentNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                      .addComponent(jbChangeDir)
-                      .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jcbSheetNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGap(121, 121, 121)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                      .addComponent(jrbDavid)
-                      .addComponent(jrbJames)
-                      .addComponent(jLabel11))))
+                  .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                      .addComponent(jLabel3)
+                      .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                      .addComponent(jcbAssignmentNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jbChangeDir)
+                    .addGroup(layout.createSequentialGroup()
+                      .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                      .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                      .addComponent(jcbSheetNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(0, 26, Short.MAX_VALUE)))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
               .addComponent(jLabel6)
@@ -406,34 +409,27 @@ public class SendMarksGUI extends javax.swing.JFrame {
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
               .addComponent(jLabel3)
-              .addComponent(jcbAssignmentNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-              .addComponent(jLabel11))
+              .addComponent(jcbAssignmentNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-              .addGroup(layout.createSequentialGroup()
-                .addComponent(jbChangeDir)
-                .addGap(12, 12, 12)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                  .addComponent(jLabel10)
-                  .addComponent(jcbSheetNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                  .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                  .addComponent(jtfNameRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(11, 11, 11)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                  .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                  .addComponent(jtfMarkRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-              .addGroup(layout.createSequentialGroup()
-                .addComponent(jrbJames)
-                .addGap(8, 8, 8)
-                .addComponent(jrbDavid)))
+            .addComponent(jbChangeDir)
+            .addGap(12, 12, 12)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+              .addComponent(jLabel10)
+              .addComponent(jcbSheetNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGap(18, 18, 18)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+              .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+              .addComponent(jtfNameRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGap(11, 11, 11)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+              .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+              .addComponent(jtfMarkRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
               .addComponent(jLabel9)
               .addComponent(jtfFinalMarkRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGap(6, 6, 6)))
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
           .addComponent(jbScrapeGrades)
           .addGroup(layout.createSequentialGroup()
@@ -444,7 +440,7 @@ public class SendMarksGUI extends javax.swing.JFrame {
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
               .addComponent(jcbColumn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
               .addComponent(jspinRow, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
           .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addComponent(jlabCurrentDirectory, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -678,6 +674,21 @@ public class SendMarksGUI extends javax.swing.JFrame {
     // TODO add your handling code here:
   }//GEN-LAST:event_jtfNameRangeActionPerformed
 
+  private void jMenuItemConfigureActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemConfigureActionPerformed
+    
+    try{
+      MailConfigDialog dlg = new MailConfigDialog(this, true);
+      dlg.show(true);
+      
+      if(dlg.isSaved()){
+        
+      }
+    }catch(Exception e){
+      e.printStackTrace();
+    }
+    
+  }//GEN-LAST:event_jMenuItemConfigureActionPerformed
+
   /**
    * @param args the command line arguments
    */
@@ -727,7 +738,6 @@ public class SendMarksGUI extends javax.swing.JFrame {
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JLabel jLabel1;
   private javax.swing.JLabel jLabel10;
-  private javax.swing.JLabel jLabel11;
   private javax.swing.JLabel jLabel2;
   private javax.swing.JLabel jLabel3;
   private javax.swing.JLabel jLabel4;
@@ -736,6 +746,9 @@ public class SendMarksGUI extends javax.swing.JFrame {
   private javax.swing.JLabel jLabel7;
   private javax.swing.JLabel jLabel8;
   private javax.swing.JLabel jLabel9;
+  private javax.swing.JMenu jMenu2;
+  private javax.swing.JMenuBar jMenuBar1;
+  private javax.swing.JMenuItem jMenuItemConfigure;
   private javax.swing.JScrollPane jScrollPane2;
   private javax.swing.JButton jbChangeDir;
   private javax.swing.JButton jbScrapeGrades;
@@ -745,9 +758,7 @@ public class SendMarksGUI extends javax.swing.JFrame {
   private javax.swing.JCheckBox jcbDummyRun;
   private javax.swing.JComboBox<String> jcbSheetNumber;
   private javax.swing.JLabel jlabCurrentDirectory;
-  private javax.swing.JRadioButton jrbDavid;
-  private javax.swing.ButtonGroup jrbGroup1;
-  private javax.swing.JRadioButton jrbJames;
+  private javax.swing.JMenu jmenuSetup;
   private javax.swing.JSpinner jspinRow;
   private javax.swing.JTextArea jtaActivityLog;
   private javax.swing.JTextField jtfFinalMarkRange;
