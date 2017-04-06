@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JFileChooser;
