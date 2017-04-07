@@ -24,11 +24,16 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
@@ -76,11 +81,8 @@ public class SendMarksGUI extends javax.swing.JFrame {
     jPopupMenuEdit = new javax.swing.JPopupMenu();
     jPMICopy = new javax.swing.JMenuItem("Copy");
 
-    jPMICopy.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent evt) {
-        jPMICopyActionPerformed(evt);
-      }
+    jPMICopy.addActionListener((ActionEvent evt) -> {
+      jPMICopyActionPerformed(evt);
     });
 
     jPMICopy.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.META_MASK));
@@ -97,96 +99,10 @@ public class SendMarksGUI extends javax.swing.JFrame {
     jtfNameRange.setInputVerifier(new RangeInputVerifier());
     jtfMarkRange.setInputVerifier(new RangeInputVerifier());
     jtfFinalMarkRange.setInputVerifier(new RangeInputVerifier());
-    
-    
-    
-    readCSS("\t\t");
-    readStudentDetails();
-  }
+   }
   
-  private String fillDetails(String strTag, String strFmtData, String strDetails){
-    StringBuilder sb = new StringBuilder();
   
-    sb.append("(?s)(.*)").append(strTag).append("(.*$)");
-    
-    String strPattern = sb.toString();
-    Pattern p = Pattern.compile(strPattern);
-    Matcher m = p.matcher(strDetails);
-    
-    
-    if(!m.find()){
-      System.out.println("Couldn't find pattern: " + strPattern);
-    }
-    
-    sb = new StringBuilder();
-    sb.append("$1").append(strFmtData).append("$2");
-    String strReplace = sb.toString();
-    
-    return strDetails.replaceAll(strPattern, strReplace);
-  }
   
-  private String completeStudentDetails(String strDetails, Object[] studentData){
-    String strStudentDetails = fillDetails("ASSNUM", (String)studentData[0], strDetails);
-    strStudentDetails = fillDetails("STUDENTNAME", (String)studentData[1], strStudentDetails);
-    strStudentDetails = fillDetails("STUDENTUPI", (String)studentData[2], strStudentDetails);
-    strStudentDetails = fillDetails("STUDENTEMAIL", String.format("%s@aucklanduni.ac.nz", (String)studentData[2]),strStudentDetails);
-
-    double finalMark = (Double)studentData[3];
-    double totalMark = (Double)studentData[4];
-    double percentMark = (Double)studentData[5];
-    
-    String strFinalMark = ((finalMark - Math.floor(finalMark)) > 0.1) ? String.format("%4.1f", Math.floor(finalMark)) : 
-                         String.format("%d", (int)finalMark);
-
-    String strTotalMark = ((totalMark - Math.floor(totalMark)) > 0.1) ? String.format("%4.1f", Math.floor(totalMark)) : 
-                         String.format("%d", (int)totalMark);
-
-    String strPercentMark = String.format("%5.2f", percentMark);
-
-    strStudentDetails = fillDetails("YOURMARK", strFinalMark, strStudentDetails);
-    strStudentDetails = fillDetails("TOTALMARK", strTotalMark, strStudentDetails);
-    strStudentDetails = fillDetails("PERCENTMARK", strPercentMark, strStudentDetails);
-    
-    return strStudentDetails;
-  }
-  
-  void readCSS(String indent){
-    InputStream in = getClass().getResourceAsStream("HTMLResources/assignment.css"); 
-    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-    StringBuilder sb = new StringBuilder();
-    
-    try{
-      String line = reader.readLine();
-      
-      while(line != null){
-        sb.append(indent).append(line).append('\n');
-        line = reader.readLine();
-      }
-    }catch(IOException ex){
-      ex.printStackTrace();
-    }
-    
-    strCSS = sb.toString();
-  }
-  
-  void readStudentDetails(){
-    InputStream in = getClass().getResourceAsStream("HTMLResources/studentDetails.html"); 
-    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-    StringBuilder sb = new StringBuilder();
-    
-    try{
-      String line = reader.readLine();
-      
-      while(line != null){
-        sb.append(line).append('\n');
-        line = reader.readLine();
-      }
-    }catch(IOException ex){
-      ex.printStackTrace();
-    }
-    
-    strStudentDetails = sb.toString();
-  }
 
   /**
    * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The
@@ -479,6 +395,43 @@ public class SendMarksGUI extends javax.swing.JFrame {
     }
   }//GEN-LAST:event_jbChangeDirActionPerformed
 
+  private Session getMailSession(){ 
+    Preferences prefs = Preferences.userNodeForPackage(this.getClass());
+    String from = prefs.get("FROM", "someone@somewhere.com");
+    
+    // Sender's email ID needs to be mentioned
+    // TODO: Crude check to see if the mail settings have been changed. Probably needs to be smarter
+    if (from.equalsIgnoreCase("someone@somewhere.com")) {
+      JOptionPane.showMessageDialog(null, "I can't send mail until your e-mail has been properly configured.");
+      return null;
+    }
+    
+    String username = prefs.get("USER", "");
+    String host = prefs.get("HOST", "");
+    String TTLS = prefs.get("TTLS", "");
+    String port = prefs.get("PORT", "");
+
+    Properties props = new Properties();
+    props.put("mail.smtp.auth", "true");
+    props.put("mail.smtp.starttls.enable", TTLS);
+    props.put("mail.smtp.host", host);
+    props.put("mail.smtp.port", port);
+
+
+    PasswordDialog dlg = new PasswordDialog(null, true);
+    dlg.setVisible(true);
+    String strPassword = dlg.getPassword();
+
+    // Get the Session object.
+    return Session.getInstance(props,
+      new javax.mail.Authenticator() {
+      protected PasswordAuthentication getPasswordAuthentication() {
+        return new PasswordAuthentication(username, strPassword);
+      }
+    });
+  }
+  
+    
   private void jbSendMarksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbSendMarksActionPerformed
     // TODO add your handling code here:
     File f = new File(m_strCWD);
@@ -493,166 +446,52 @@ public class SendMarksGUI extends javax.swing.JFrame {
     ArrayList<File> Files = new ArrayList<File>(Arrays.asList(f.listFiles(xlsxFilter)));
     String strLog = "";
     
-    for(File f1 : Files){
-      Pattern p = Pattern.compile("^(?<netid>[A-Za-z]{3,4}[0-9]{3})\\.xlsx");
-      Matcher m = p.matcher(f1.getName());
-      
-      if(m.find()){
-        
-        InputStream excelFileToRead;
-        XSSFWorkbook workbook = null;
-        
-        try {
-          excelFileToRead = new FileInputStream(f1.getAbsolutePath());
-          workbook = new XSSFWorkbook(excelFileToRead);
-        } catch (FileNotFoundException ex) {
-          ex.printStackTrace();
-          Logger.getLogger(SendMarksGUI.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex){
-          Logger.getLogger(SendMarksGUI.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        
-        
-        /*XSSFSheet worksheet = workbook.getSheetAt(0);
-        XSSFRow row; 
-        XSSFCell cell;
+    SheetInfo sheetInfo = new SheetInfo("Sheet" + jcbSheetNumber.getSelectedItem(),
+                                        jtfNameRange.getText(),
+                                        jtfMarkRange.getText(),
+                                        jtfFinalMarkRange.getText(),
+                                        (String)jcbAssignmentNumber.getSelectedItem());
+     
 
-        row = worksheet.getRow(0);
-        cell = row.getCell(1);*/
-        
-        /*int nameRangeIdx = workbook.getNameIndex("Name");      
-        int markRangeIdx = workbook.getNameIndex("Marks");
-        int finalMarkRangeIdx = workbook.getNameIndex("FinalMark");
-        
-        Name nameRange = workbook.getNameAt(nameRangeIdx);
-        Name markRange = workbook.getNameAt(markRangeIdx);
-        Name finalMarkRange = workbook.getNameAt(finalMarkRangeIdx);*/
-        
-        String strSheetName = "Sheet" + jcbSheetNumber.getSelectedItem();
-        String strNameRange = strSheetName + "!" + jtfNameRange.getText();
-        String strMarkRange = strSheetName + "!" + jtfMarkRange.getText();
-        String strFinalMarkRange = strSheetName + "!" + jtfFinalMarkRange.getText();
-
-        // retrieve the cell at the named range and test its contents
-        //AreaReference aref = new AreaReference(nameRange.getRefersToFormula());
-        //AreaReference aref = new AreaReference("Sheet1!$B$1:$B$2");
-        AreaReference aref = new AreaReference(strNameRange);
-        CellReference[] crefs = aref.getAllReferencedCells();
-        
-        Sheet sheet = workbook.getSheet(crefs[0].getSheetName());
-        Row r = sheet.getRow(crefs[0].getRow());
-        Cell c = r.getCell(crefs[0].getCol());
-        String strStudentName = c.getStringCellValue();
-        
-        sheet = workbook.getSheet(crefs[1].getSheetName());
-        r = sheet.getRow(crefs[1].getRow());
-        c = r.getCell(crefs[1].getCol());
-        String strStudentUPI = c.getStringCellValue();
-        
-        //aref = new AreaReference(finalMarkRange.getRefersToFormula());
-        //aref = new AreaReference("Sheet1!$C$25:$D$25");
-        aref = new AreaReference(strFinalMarkRange);
-        crefs = aref.getAllReferencedCells();
-        double totalMark = 0;
-        double finalMark = 0;
-        double percentMark = 0;
-        
-        for(int i = 0; i < 2; i++){
-          sheet = workbook.getSheet(crefs[i].getSheetName());
-          r = sheet.getRow(crefs[i].getRow());
-          c = r.getCell(crefs[i].getCol());
-          
-          if(i == 0){
-            totalMark = c.getNumericCellValue();
-          }else{
-            finalMark = c.getNumericCellValue();
-          }
-        }
-        
-        percentMark = 100 * finalMark / totalMark;
-        
-        
-        
-        //aref = new AreaReference(markRange.getRefersToFormula());
-        //aref = new AreaReference("Sheet1!$A$4:$E$24");
-        aref = new AreaReference(strMarkRange);
-        crefs = aref.getAllReferencedCells();
-        
-        int numRows = aref.getLastCell().getRow() - aref.getFirstCell().getRow() + 1;
-        int numCols = aref.getLastCell().getCol() - aref.getFirstCell().getCol() + 1;
-        
-        Object[][] markTable = new Object[numRows][];
-  
-        for(int row = 0; row  < numRows; row++){
-          
-          markTable[row] = new Object[numCols];
-          
-          for(int col = 0; col < numCols; col++){
-            int idx = row * numCols + col;
-           
-            CellReference cr = crefs[idx];
-            sheet = workbook.getSheet(cr.getSheetName());
-            r = sheet.getRow(cr.getRow());
-            c = r.getCell(cr.getCol());
-            
-            if(c != null){
-              int cellType = c.getCellType();
-              
-              switch(cellType){
-                case XSSFCell.CELL_TYPE_STRING:
-                  markTable[row][col] = c.getStringCellValue();
-                  break;
-                case XSSFCell.CELL_TYPE_NUMERIC:
-                case XSSFCell.CELL_TYPE_FORMULA:
-                  double d = c.getNumericCellValue();
-                  if(d - Math.floor(d) < 0.01)
-                    markTable[row][col] = (int)d;
-                  else
-                    markTable[row][col] = d;
-                  break;
-                case XSSFCell.CELL_TYPE_BLANK:
-                  markTable[row][col] = "";
-                  break;
-                default:
-                  markTable[row][col] = "";
-                  break;
-              }
-             }
-          }
-        }
-        
-        
-        Object[] studentData = {(String)jcbAssignmentNumber.getSelectedItem(),
-                                strStudentName, strStudentUPI, 
-                                finalMark, totalMark, percentMark};
-        readStudentDetails();
-        strStudentDetails = completeStudentDetails(strStudentDetails, studentData);
-        HTMLMarksheet ms = new HTMLMarksheet((String)jcbAssignmentNumber.getSelectedItem(), 
-                                             strCSS, strStudentDetails,
-                                             markTable);
-        
-       
-        try{
-          ms.write(m_strCWD + "/test/" + strStudentUPI + ".html");
-        }catch(IOException ex){
-          ex.printStackTrace();
-        }
-        
-        String strNetID = m.group("netid");
-        String strEmail = strNetID + "@aucklanduni.ac.nz";
-        if(!bDummyRun){
-          strLog += "Sending mail to " + strEmail + "\n";  
-          ms.send(jtfSubjectLine.getText(), strEmail, false);
-        }else{
-          strLog += "Pretending to send mail to " + strEmail + "\n";
-        }
-        jtaActivityLog.setText(strLog); 
-        
-        
-      }
-    }
+    Session session = getMailSession();
     
+    if(session != null){  
+      Preferences prefs = Preferences.userNodeForPackage(this.getClass());
+      String from = prefs.get("FROM", "");
+      
+      for(File f1 : Files){
+
+        HTMLMarksheet ms = null;
+
+        try{
+          ms = new HTMLMarksheet(f1, sheetInfo);
+        }catch(FilenameFormatException | FileNotFoundException e){
+          JOptionPane.showMessageDialog(this, e, "Exception", JOptionPane.ERROR_MESSAGE);
+        }catch(IOException e){
+          JOptionPane.showMessageDialog(this, e, "Exception", JOptionPane.ERROR_MESSAGE);
+        }
+
+        try {
+          ms.write(m_strCWD + "/test/");
+        } catch (IOException ex) {
+          ex.printStackTrace();
+        }
+
+
+
+        ms.send(session, jtfSubjectLine.getText(), from, bDummyRun);
+        if(bDummyRun){
+          strLog += "Faked sending message to " + ms.getNetId() + "\n";
+        }else{
+          strLog += "Sent message to " + ms.getNetId() + "\n";
+        }
+        
+        jtaActivityLog.setText(strLog);
+
+      }
+    }else{
+      JOptionPane.showMessageDialog(this, null, "Couldn't get mail session\n", JOptionPane.ERROR_MESSAGE);
+    }
   }//GEN-LAST:event_jbSendMarksActionPerformed
 
   private void jbScrapeGradesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbScrapeGradesActionPerformed
@@ -727,8 +566,6 @@ public class SendMarksGUI extends javax.swing.JFrame {
   private boolean bDummyRun;
   
   private String m_strCWD;
-  private String strCSS;
-  private String strStudentDetails;
   
   private javax.swing.JPopupMenu jPopupMenuEdit;
   private javax.swing.JMenuItem jPMIClear;

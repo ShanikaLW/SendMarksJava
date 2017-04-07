@@ -9,14 +9,21 @@ package sendmarks;
  *
  * @author James M. Curran <j.curran@auckland.ac.nz>
  */
-public class JPasswordDialog extends javax.swing.JDialog {
+public class PasswordDialog extends javax.swing.JDialog {
 
   /**
    * Creates new form JPasswordDialog
    */
-  public JPasswordDialog(java.awt.Frame parent, boolean modal) {
+  public PasswordDialog(java.awt.Frame parent, boolean modal) {
     super(parent, modal);
     initComponents();
+    
+    password = "123456789";
+    jPassword.setText(password);
+  }
+  
+  public String getPassword(){
+    return password;
   }
 
   /**
@@ -29,9 +36,7 @@ public class JPasswordDialog extends javax.swing.JDialog {
 
     jPassword = new javax.swing.JPasswordField();
     jLabel1 = new javax.swing.JLabel();
-    jButton1 = new javax.swing.JButton();
-    jLabel2 = new javax.swing.JLabel();
-    jtfEmailAddress = new javax.swing.JTextField();
+    jbuttonOK = new javax.swing.JButton();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -39,14 +44,11 @@ public class JPasswordDialog extends javax.swing.JDialog {
 
     jLabel1.setText("Please enter your mail password:");
 
-    jButton1.setText("OK");
-
-    jLabel2.setText("Please enter your email address:");
-
-    jtfEmailAddress.setText("someone@somewhere.com");
-    jtfEmailAddress.addActionListener(new java.awt.event.ActionListener() {
+    jbuttonOK.setText("OK");
+    jbuttonOK.setActionCommand("OK");
+    jbuttonOK.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        jtfEmailAddressActionPerformed(evt);
+        jbuttonOKActionPerformed(evt);
       }
     });
 
@@ -57,43 +59,35 @@ public class JPasswordDialog extends javax.swing.JDialog {
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addComponent(jLabel1))
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
           .addGroup(layout.createSequentialGroup()
-            .addComponent(jPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(jButton1))
-          .addGroup(layout.createSequentialGroup()
-            .addComponent(jtfEmailAddress)
-            .addContainerGap())))
+            .addComponent(jLabel1)
+            .addGap(18, 18, 18)
+            .addComponent(jPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+          .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addComponent(jbuttonOK)
+            .addGap(138, 138, 138))))
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-        .addContainerGap(28, Short.MAX_VALUE)
-        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-          .addComponent(jtfEmailAddress)
-          .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        .addGap(1, 1, 1)
-        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(jLabel1)
-          .addComponent(jPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addComponent(jButton1))
+          .addComponent(jPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        .addGap(18, 18, 18)
+        .addComponent(jbuttonOK)
         .addGap(17, 17, 17))
     );
-
-    layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jLabel2, jtfEmailAddress});
 
     layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jLabel1, jPassword});
 
     pack();
   }// </editor-fold>//GEN-END:initComponents
 
-  private void jtfEmailAddressActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtfEmailAddressActionPerformed
-    // TODO add your handling code here:
-  }//GEN-LAST:event_jtfEmailAddressActionPerformed
+  private void jbuttonOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbuttonOKActionPerformed
+    password = new String(jPassword.getPassword());
+    dispose();
+  }//GEN-LAST:event_jbuttonOKActionPerformed
 
   /**
    * @param args the command line arguments
@@ -112,20 +106,21 @@ public class JPasswordDialog extends javax.swing.JDialog {
         }
       }
     } catch (ClassNotFoundException ex) {
-      java.util.logging.Logger.getLogger(JPasswordDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+      java.util.logging.Logger.getLogger(PasswordDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
     } catch (InstantiationException ex) {
-      java.util.logging.Logger.getLogger(JPasswordDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+      java.util.logging.Logger.getLogger(PasswordDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
     } catch (IllegalAccessException ex) {
-      java.util.logging.Logger.getLogger(JPasswordDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+      java.util.logging.Logger.getLogger(PasswordDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
     } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-      java.util.logging.Logger.getLogger(JPasswordDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+      java.util.logging.Logger.getLogger(PasswordDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
     }
+    //</editor-fold>
     //</editor-fold>
 
     /* Create and display the dialog */
     java.awt.EventQueue.invokeLater(new Runnable() {
       public void run() {
-        JPasswordDialog dialog = new JPasswordDialog(new javax.swing.JFrame(), true);
+        PasswordDialog dialog = new PasswordDialog(new javax.swing.JFrame(), true);
         dialog.addWindowListener(new java.awt.event.WindowAdapter() {
           @Override
           public void windowClosing(java.awt.event.WindowEvent e) {
@@ -136,12 +131,12 @@ public class JPasswordDialog extends javax.swing.JDialog {
       }
     });
   }
+  
+ private String password; 
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
-  private javax.swing.JButton jButton1;
   private javax.swing.JLabel jLabel1;
-  private javax.swing.JLabel jLabel2;
   private javax.swing.JPasswordField jPassword;
-  private javax.swing.JTextField jtfEmailAddress;
+  private javax.swing.JButton jbuttonOK;
   // End of variables declaration//GEN-END:variables
 }
