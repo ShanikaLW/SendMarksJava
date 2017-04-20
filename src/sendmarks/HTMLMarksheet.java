@@ -42,6 +42,7 @@ public class HTMLMarksheet {
 
   private String strFormattedHTMLSheet;
   private String strNetID, strEmail;
+  private double finalMark;
 
   public HTMLMarksheet(File f1, SheetInfo sheetInfo) throws FilenameFormatException, FileNotFoundException, IOException {
 
@@ -97,7 +98,7 @@ public class HTMLMarksheet {
       aref = new AreaReference(strFinalMarkRange);
       crefs = aref.getAllReferencedCells();
       double totalMark = 0;
-      double finalMark = 0;
+      finalMark = 0;
       double percentMark = 0;
 
       for (int i = 0; i < 2; i++) {
@@ -207,6 +208,10 @@ public class HTMLMarksheet {
   
   public String getNetId(){
     return strNetID;
+  }
+  
+  public double getFinalMark(){
+    return finalMark;
   }
  
   public void send(Session session, String strSubject, String from, boolean bDummyRun) {
