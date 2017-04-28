@@ -5,11 +5,13 @@
         <group>
             <file>file:/Users/jcur002/Dropbox/Code/git/SendMarks/src/sendmarks/HTMLMarksheet.java</file>
             <file>file:/Users/jcur002/Dropbox/Code/git/SendMarks/src/sendmarks/PasswordDialog.java</file>
+            <file>file:/Users/jcur002/Dropbox/Code/git/SendMarks/src/sendmarks/SheetInfo.java</file>
             <file>file:/Users/jcur002/Dropbox/Code/git/SendMarks/src/sendmarks/SheetRangeException.java</file>
             <file>file:/Users/jcur002/Dropbox/Code/git/SendMarks/src/sendmarks/RangeInputVerifier.java</file>
             <file>file:/Users/jcur002/Dropbox/Code/git/SendMarks/src/sendmarks/MailConfigDialog.java</file>
             <file>file:/Users/jcur002/Dropbox/Code/git/SendMarks/src/sendmarks/SendMarksGUI.java</file>
             <file>file:/Users/jcur002/Dropbox/Code/git/SendMarks/src/sendmarks/MailConfig.java</file>
+            <file>file:/Users/jcur002/Dropbox/Code/git/SendMarks/src/sendmarks/FilenameFormatException.java</file>
         </group>
     </open-files>
 </project-private>

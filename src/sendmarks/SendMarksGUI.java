@@ -14,18 +14,29 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.prefs.Preferences;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  *
@@ -74,7 +85,7 @@ public class SendMarksGUI extends javax.swing.JFrame {
     MouseListener popupListener = new PopupListener();
     jtaActivityLog.addMouseListener(popupListener);
     //m_strCWD = "/Users/jcur002/curran/Work/2016/Teaching/779/Assignments/A3/Marks/MarksAss3";
-    m_strCWD = "/Users/jcur002/Dropbox/Work/2017/Teaching/779/Assignments/A1/Marks";
+    m_strCWD = "/Users/jcur002/Dropbox/Work/2017/Teaching/779/Assignments/A2/Marks";
     jlabCurrentDirectory.setText(m_strCWD);
     
     jtfNameRange.setInputVerifier(new RangeInputVerifier());
@@ -114,6 +125,7 @@ public class SendMarksGUI extends javax.swing.JFrame {
     jtfNameRange = new javax.swing.JTextField();
     jtfFinalMarkRange = new javax.swing.JTextField();
     jcbDummyRun = new javax.swing.JCheckBox();
+    jbGuessRanges = new javax.swing.JButton();
     jMenuBar1 = new javax.swing.JMenuBar();
     jmenuSetup = new javax.swing.JMenu();
     jMenuItemConfigure = new javax.swing.JMenuItem();
@@ -194,6 +206,13 @@ public class SendMarksGUI extends javax.swing.JFrame {
       }
     });
 
+    jbGuessRanges.setText("Guess Ranges");
+    jbGuessRanges.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jbGuessRangesActionPerformed(evt);
+      }
+    });
+
     jmenuSetup.setText("Setup");
 
     jMenuItemConfigure.setText("Configure...");
@@ -235,7 +254,9 @@ public class SendMarksGUI extends javax.swing.JFrame {
                   .addComponent(jtfMarkRange)
                   .addComponent(jtfNameRange)
                   .addComponent(jtfFinalMarkRange))
-                .addGap(245, 245, 245))
+                .addGap(18, 18, 18)
+                .addComponent(jbGuessRanges)
+                .addGap(130, 130, 130))
               .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                   .addComponent(jtfSubjectLine, javax.swing.GroupLayout.PREFERRED_SIZE, 485, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -298,7 +319,8 @@ public class SendMarksGUI extends javax.swing.JFrame {
             .addGap(11, 11, 11)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
               .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-              .addComponent(jtfMarkRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+              .addComponent(jtfMarkRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+              .addComponent(jbGuessRanges))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
               .addComponent(jLabel9)
@@ -519,7 +541,7 @@ public class SendMarksGUI extends javax.swing.JFrame {
   private void jtfNameRangeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtfNameRangeActionPerformed
     // TODO add your handling code here:
   }//GEN-LAST:event_jtfNameRangeActionPerformed
-
+  
   private void jMenuItemConfigureActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemConfigureActionPerformed
     
     try{
@@ -534,6 +556,176 @@ public class SendMarksGUI extends javax.swing.JFrame {
     }
     
   }//GEN-LAST:event_jMenuItemConfigureActionPerformed
+
+  private class RC{
+    int row, col;
+    
+    
+    public RC(){
+      row = -1;
+      col = -1;
+    }
+    
+    public RC(int r, int c){
+      row = r;
+      col = c;
+    }
+    
+    public RC(RC rc){
+      row = rc.row;
+      col = rc.col;
+    }
+    
+    public void add(int rowOffset, int colOffset){
+      row += rowOffset; // NOTE: there is no bounds checking here
+      col += colOffset;
+    }
+    
+    public void add(RC rc){
+      row += rc.row;
+      col += rc.col;
+    }
+    
+    public void incRow(){
+      row++;
+    }
+    
+    public void incCol(){
+      col++;
+    }
+    
+    public boolean isAddress(){
+      return (row > 0 & col > 0);
+    }
+    
+    public String toString(){
+      StringBuilder sb = new StringBuilder();
+      
+      sb.append('$').append((char)(64 + col)).append('$').append(row);
+      
+      return sb.toString();
+    }
+  }
+  
+  private RC findAddress(Sheet sheet, String cellContent) {
+    for (Row row : sheet) {
+      for (Cell cell : row) {
+         if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
+          if (cell.getRichStringCellValue().getString().trim().equals(cellContent)) {
+            return new RC(row.getRowNum() + 1, cell.getColumnIndex() + 1);
+          }
+        }
+      }
+    }
+    return new RC();
+  }
+  
+  private String buildAddress(String sheetName, RC topLeft, RC bottomRight){
+    StringBuilder sb = new StringBuilder();
+    
+    if(sheetName != null){
+      sb.append(sheetName).append('!').append(topLeft.toString()).append(':');
+      sb.append(sheetName).append('!').append(bottomRight.toString());
+    }else{
+      sb.append(topLeft.toString()).append(':');
+      sb.append(bottomRight.toString());
+    }
+    return sb.toString();
+  }
+  
+  private String buildAddress(String sheetName, RC cellAddr){
+    StringBuilder sb = new StringBuilder();
+    
+    if(sheetName != null){
+      sb.append(sheetName).append('!').append(cellAddr.toString());
+    }else{
+      sb.append(cellAddr.toString());
+    }
+    
+    return sb.toString();
+  }
+  
+  private void jbGuessRangesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbGuessRangesActionPerformed
+    // TODO add your handling code here:
+    File f = new File(m_strCWD);
+
+    FilenameFilter xlsxFilter = new FilenameFilter() {
+      @Override
+      public boolean accept(File dir, String name) {
+        return name.toLowerCase().endsWith(".xlsx");
+      }
+    };
+
+    File fList[] = f.listFiles(xlsxFilter);
+
+    if (fList.length == 0) {
+      // Error Dialog here
+    } else {
+      File f1 = fList[0];
+
+      Pattern p = Pattern.compile("^(?<netid>[A-Za-z]{3,4}[0-9]{3})\\.xlsx");
+      Matcher m = p.matcher(f1.getName());
+
+      if (m.find()) {
+        InputStream excelFileToRead;
+        XSSFWorkbook workbook = null;
+
+        try {
+          excelFileToRead = new FileInputStream(f1.getAbsolutePath());
+          workbook = new XSSFWorkbook(excelFileToRead);
+          Sheet sheet = workbook.getSheetAt(0); // Assumes marks on Sheet 1
+          
+          RC nameAddr = findAddress(sheet, "Name");
+          RC UPIAddr = findAddress(sheet, "UPI");
+          RC marksStart = findAddress(sheet, "Question");
+          RC marksEnd = findAddress(sheet, "Total");
+          
+          if(nameAddr.isAddress() && UPIAddr.isAddress() && marksStart.isAddress() && marksEnd.isAddress()){
+            nameAddr.add(new RC(0, 1)); 
+            UPIAddr.add(new RC(0, 1));
+                        
+            String nameRange = buildAddress(null, nameAddr, UPIAddr);
+            
+            jtfNameRange.setText(nameRange);
+            
+            RC qmarksStart = new RC(marksStart);
+            RC qmarksEnd = new RC(marksEnd);
+            qmarksEnd.add(new RC(-1, 3));
+            
+            String qmarksRange = buildAddress(null, qmarksStart, qmarksEnd);
+            
+            jtfMarkRange.setText(qmarksRange);
+            
+            RC finalMarksStart = new RC(marksEnd);
+            RC finalMarksEnd = new RC(marksEnd);
+            
+            finalMarksStart.add(new RC(0, 1));
+            finalMarksEnd.add(new RC(0, 2));
+            
+            String finalMarkRange = buildAddress(null, finalMarksStart, finalMarksEnd);
+            
+            jtfFinalMarkRange.setText(finalMarkRange);
+            
+          }else{
+            
+          }
+          
+          
+        } catch (FileNotFoundException e) {
+
+        } catch (IOException e) {
+
+        }
+
+      } else {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("The file ").append(f1.getName()).append(" does not conform to the format: UPI.xlsx");
+        sb.append(" where UPI consists of 3 or 4 letters and exaxtly three numbers, e.g. jcur002");
+        //throw new FilenameFormatException(sb.toString());
+      }
+    }
+  }//GEN-LAST:event_jbGuessRangesActionPerformed
 
   /**
    * @param args the command line arguments
@@ -593,6 +785,7 @@ public class SendMarksGUI extends javax.swing.JFrame {
   private javax.swing.JMenuItem jMenuItemConfigure;
   private javax.swing.JScrollPane jScrollPane2;
   private javax.swing.JButton jbChangeDir;
+  private javax.swing.JButton jbGuessRanges;
   private javax.swing.JButton jbScrapeGrades;
   private javax.swing.JButton jbSendMarks;
   private javax.swing.JComboBox<String> jcbAssignmentNumber;
