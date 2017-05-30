@@ -20,6 +20,9 @@ public class PasswordDialog extends javax.swing.JDialog {
     
     password = "123456789";
     jPassword.setText(password);
+    jPassword.selectAll();
+    
+    this.getRootPane().setDefaultButton(jbuttonOK);
   }
   
   public String getPassword(){
