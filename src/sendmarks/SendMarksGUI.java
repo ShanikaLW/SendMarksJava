@@ -85,7 +85,17 @@ public class SendMarksGUI extends javax.swing.JFrame {
     MouseListener popupListener = new PopupListener();
     jtaActivityLog.addMouseListener(popupListener);
     //m_strCWD = "/Users/jcur002/curran/Work/2016/Teaching/779/Assignments/A3/Marks/MarksAss3";
-    m_strCWD = "/Users/jcur002/Dropbox/Work/2017/Teaching/779/Assignments/A2/Marks";
+    
+    // I have changed this so that the last used directory is the chosen directory
+    Preferences prefs = Preferences.userNodeForPackage(this.getClass());
+    m_strCWD = prefs.get("CURRENT_WORKING_DIR", System.getProperty("user.home"));
+    
+    // Set the assignment number to the last value used
+    String strAssNum = prefs.get("ASSNUM", "0");
+    int nAssNum = Integer.parseInt(strAssNum);
+    jcbAssignmentNumber.setSelectedIndex(nAssNum);
+
+    
     jlabCurrentDirectory.setText(m_strCWD);
     
     jtfNameRange.setInputVerifier(new RangeInputVerifier());
@@ -126,6 +136,8 @@ public class SendMarksGUI extends javax.swing.JFrame {
     jtfFinalMarkRange = new javax.swing.JTextField();
     jcbDummyRun = new javax.swing.JCheckBox();
     jbGuessRanges = new javax.swing.JButton();
+    jPB = new javax.swing.JProgressBar();
+    jLabel4 = new javax.swing.JLabel();
     jMenuBar1 = new javax.swing.JMenuBar();
     jmenuSetup = new javax.swing.JMenu();
     jMenuItemConfigure = new javax.swing.JMenuItem();
@@ -213,6 +225,8 @@ public class SendMarksGUI extends javax.swing.JFrame {
       }
     });
 
+    jLabel4.setText("Progress:");
+
     jmenuSetup.setText("Setup");
 
     jMenuItemConfigure.setText("Configure...");
@@ -244,6 +258,11 @@ public class SendMarksGUI extends javax.swing.JFrame {
           .addGroup(layout.createSequentialGroup()
             .addGap(16, 16, 16)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+              .addGroup(layout.createSequentialGroup()
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPB, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
               .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                   .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -326,7 +345,11 @@ public class SendMarksGUI extends javax.swing.JFrame {
               .addComponent(jLabel9)
               .addComponent(jtfFinalMarkRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGap(6, 6, 6)))
-        .addComponent(jbScrapeGrades)
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(jbScrapeGrades)
+          .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(jLabel4)
+            .addComponent(jPB, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
           .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -351,7 +374,7 @@ public class SendMarksGUI extends javax.swing.JFrame {
   
   private void jbChangeDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbChangeDirActionPerformed
     // TODO add your handling code here:
-    JFileChooser fc = new JFileChooser();
+    JFileChooser fc = new JFileChooser(m_strCWD);
     fc.setDialogTitle("Choose a case directory...");
     fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
     fc.setAcceptAllFileFilterUsed(false);
@@ -363,6 +386,9 @@ public class SendMarksGUI extends javax.swing.JFrame {
       String strPath = selectedFile.getAbsolutePath();
       jlabCurrentDirectory.setText(strPath);
       m_strCWD = strPath;
+      
+      Preferences prefs = Preferences.userNodeForPackage(this.getClass());
+      prefs.put("CURRENT_WORKING_DIR", m_strCWD);
     }
   }//GEN-LAST:event_jbChangeDirActionPerformed
 
@@ -416,6 +442,9 @@ public class SendMarksGUI extends javax.swing.JFrame {
     
     ArrayList<File> Files = new ArrayList<File>(Arrays.asList(f.listFiles(xlsxFilter)));
     String strLog = "";
+    jPB.setMaximum(Files.size());
+    jPB.setValue(0);
+    int pbCounter = 0;
     
     SheetInfo sheetInfo = new SheetInfo("Sheet" + jcbSheetNumber.getSelectedItem(),
                                         jtfNameRange.getText(),
@@ -458,7 +487,8 @@ public class SendMarksGUI extends javax.swing.JFrame {
         }
         
         jtaActivityLog.setText(strLog);
-
+        pbCounter++;
+        jPB.setValue(pbCounter);
       }
     }else{
       JOptionPane.showMessageDialog(this, null, "Couldn't get mail session\n", JOptionPane.ERROR_MESSAGE);
@@ -498,6 +528,10 @@ public class SendMarksGUI extends javax.swing.JFrame {
         fw = new FileWriter(strPath);
         bw = new BufferedWriter(fw);
         String strLog = "";
+        
+        jPB.setMaximum(Files.size());
+        jPB.setValue(0);
+        int pbCounter = 0;
  
         for (File f1 : Files) {
 
@@ -511,7 +545,8 @@ public class SendMarksGUI extends javax.swing.JFrame {
             bw.write(sb.toString());
             strLog += sb.toString();
             jtaActivityLog.setText(strLog);
-
+            pbCounter++;
+            jPB.setValue(pbCounter);
           } catch (FilenameFormatException | FileNotFoundException e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Exception", JOptionPane.ERROR_MESSAGE);
           } catch (IOException e) {
@@ -532,6 +567,11 @@ public class SendMarksGUI extends javax.swing.JFrame {
     
     sb.append("STATS 779 Assignment ").append(jcbAssignmentNumber.getSelectedItem()).append(" Marks");
     jtfSubjectLine.setText(sb.toString());
+    
+    Preferences prefs = Preferences.userNodeForPackage(this.getClass());
+    int i = Integer.parseInt((String)(jcbAssignmentNumber.getSelectedItem()));
+    String strAssNum = String.format("%d", i - 1);
+    prefs.put("ASSNUM", strAssNum);
   }//GEN-LAST:event_jcbAssignmentNumberActionPerformed
 
   private void jcbDummyRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbDummyRunActionPerformed
@@ -552,7 +592,7 @@ public class SendMarksGUI extends javax.swing.JFrame {
         
       }
     }catch(Exception e){
-      e.printStackTrace();
+      JOptionPane.showMessageDialog(this, e.getMessage(), "Exception", JOptionPane.ERROR_MESSAGE);
     }
     
   }//GEN-LAST:event_jMenuItemConfigureActionPerformed
@@ -707,22 +747,24 @@ public class SendMarksGUI extends javax.swing.JFrame {
             jtfFinalMarkRange.setText(finalMarkRange);
             
           }else{
-            
+            JOptionPane.showMessageDialog(this, "Sorry I couldn't determine ranges.", "Something went wrong", JOptionPane.WARNING_MESSAGE);
           }
           
           
-        } catch (FileNotFoundException e) {
-
-        } catch (IOException e) {
-
+        }catch (FileNotFoundException e) {
+          JOptionPane.showMessageDialog(this, e.getMessage(), "File Not Found Exception", JOptionPane.ERROR_MESSAGE);
+        }catch (IOException e) {
+          JOptionPane.showMessageDialog(this, e.getMessage(), "IO Exception", JOptionPane.ERROR_MESSAGE);
         }
 
       } else {
         StringBuilder sb = new StringBuilder();
 
         sb.append("The file ").append(f1.getName()).append(" does not conform to the format: UPI.xlsx");
-        sb.append(" where UPI consists of 3 or 4 letters and exaxtly three numbers, e.g. jcur002");
-        //throw new FilenameFormatException(sb.toString());
+        sb.append(" where UPI consists of 3 or 4 letters and exaxtly three numbers, e.g. jcur002. ");
+        sb.append("This is not a critical error, but this file will not be processed.");
+        
+        JOptionPane.showMessageDialog(this, sb.toString(), "File Name Format Exception", JOptionPane.WARNING_MESSAGE);
       }
     }
   }//GEN-LAST:event_jbGuessRangesActionPerformed
@@ -776,6 +818,7 @@ public class SendMarksGUI extends javax.swing.JFrame {
   private javax.swing.JLabel jLabel10;
   private javax.swing.JLabel jLabel2;
   private javax.swing.JLabel jLabel3;
+  private javax.swing.JLabel jLabel4;
   private javax.swing.JLabel jLabel6;
   private javax.swing.JLabel jLabel7;
   private javax.swing.JLabel jLabel8;
@@ -783,6 +826,7 @@ public class SendMarksGUI extends javax.swing.JFrame {
   private javax.swing.JMenu jMenu2;
   private javax.swing.JMenuBar jMenuBar1;
   private javax.swing.JMenuItem jMenuItemConfigure;
+  private javax.swing.JProgressBar jPB;
   private javax.swing.JScrollPane jScrollPane2;
   private javax.swing.JButton jbChangeDir;
   private javax.swing.JButton jbGuessRanges;

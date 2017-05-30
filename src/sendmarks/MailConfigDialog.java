@@ -16,28 +16,31 @@ public class MailConfigDialog extends javax.swing.JDialog {
 
   /**
    * Creates new form MailConfigDialog
+   * @param parent
+   * @param modal
+   * @throws java.io.IOException
    */
   public MailConfigDialog(java.awt.Frame parent, boolean modal) throws IOException {
     super(parent, modal);
     initComponents();
-    
-     prefs = Preferences.userNodeForPackage(this.getClass());
-     
-     strFrom = prefs.get("FROM", "someone@somewhere.com");
 
-     strServerName = prefs.get("HOST", "mailhost.mail.com");
-     strUser = prefs.get("USER", "someone");
-     port = Integer.parseInt(prefs.get("PORT", "25"));
-     bTTLS = Boolean.parseBoolean(prefs.get("TTLS", "true"));
-     
-     jtfServerName.setText(strServerName);
-     jtfPort.setText(((Integer)port).toString());
-     jtfUser.setText(strUser);
-     jtfSender.setText(strFrom);
-     jcbTTLS.setSelected(bTTLS);
-     
-     bSaved = false;
-   }
+    prefs = Preferences.userNodeForPackage(this.getClass());
+
+    strFrom = prefs.get("FROM", "someone@somewhere.com");
+
+    strServerName = prefs.get("HOST", "mailhost.mail.com");
+    strUser = prefs.get("USER", "someone");
+    port = Integer.parseInt(prefs.get("PORT", "25"));
+    bTTLS = Boolean.parseBoolean(prefs.get("TTLS", "true"));
+
+    jtfServerName.setText(strServerName);
+    jtfPort.setText(((Integer) port).toString());
+    jtfUser.setText(strUser);
+    jtfSender.setText(strFrom);
+    jcbTTLS.setSelected(bTTLS);
+
+    bSaved = false;
+  }
   
   public boolean isSaved(){
     return bSaved;
