@@ -164,7 +164,7 @@ public class HTMLMarksheet {
         }
       }
 
-      Object[] studentData = {sheetInfo.getAssignmentNumber(),
+      Object[] studentData = {sheetInfo.getAssignmentNumber(),sheetInfo.getCourse(),
                               strStudentName, strStudentUPI,
                               finalMark, totalMark, percentMark};
 
@@ -174,7 +174,9 @@ public class HTMLMarksheet {
       StringBuilder sb = new StringBuilder();
 
       sb.append("<!DOCTYPE html>\n<html>\n<head>\n");
-      sb.append("<title>STATS 779 Assignment ");
+      sb.append("<title>");
+      sb.append(sheetInfo.getCourse());
+      sb.append(" Assignment ");
       sb.append(sheetInfo.getAssignmentNumber());
       sb.append("</title>\n");
       sb.append("<style>\n");
@@ -261,13 +263,16 @@ public class HTMLMarksheet {
   private String completeStudentDetails(String strDetails, Object[] studentData) {
     String strStudentDetails = fillDetails("ASSNUM", (String) studentData[0], strDetails);
     
-    strStudentDetails = fillDetails("STUDENTNAME", (String) studentData[1], strStudentDetails);
-    strStudentDetails = fillDetails("STUDENTUPI", (String) studentData[2], strStudentDetails);
-    strStudentDetails = fillDetails("STUDENTEMAIL", String.format("%s@aucklanduni.ac.nz", (String) studentData[2]), strStudentDetails);
+    strStudentDetails = fillDetails("COURSE", (String) studentData[1], strStudentDetails);
+    
+    
+    strStudentDetails = fillDetails("STUDENTNAME", (String) studentData[2], strStudentDetails);
+    strStudentDetails = fillDetails("STUDENTUPI", (String) studentData[3], strStudentDetails);
+    strStudentDetails = fillDetails("STUDENTEMAIL", String.format("%s@aucklanduni.ac.nz", (String) studentData[3]), strStudentDetails);
 
-    double finalMark = (Double) studentData[3];
-    double totalMark = (Double) studentData[4];
-    double percentMark = (Double) studentData[5];
+    double finalMark = (Double) studentData[4];
+    double totalMark = (Double) studentData[5];
+    double percentMark = (Double) studentData[6];
 
     String strFinalMark = ((finalMark - Math.floor(finalMark)) > 0.1) ? String.format("%4.1f", Math.floor(finalMark))
       : String.format("%d", (int) finalMark);

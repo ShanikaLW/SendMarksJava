@@ -90,6 +90,11 @@ public class SendMarksGUI extends javax.swing.JFrame {
     Preferences prefs = Preferences.userNodeForPackage(this.getClass());
     m_strCWD = prefs.get("CURRENT_WORKING_DIR", System.getProperty("user.home"));
     
+    // Set the course number to the last value used
+    String strCourse = prefs.get("COURSE", "STATS 779");
+    jcbCourse.setSelectedItem(strCourse);
+
+    
     // Set the assignment number to the last value used
     String strAssNum = prefs.get("ASSNUM", "0");
     int nAssNum = Integer.parseInt(strAssNum);
@@ -138,6 +143,8 @@ public class SendMarksGUI extends javax.swing.JFrame {
     jbGuessRanges = new javax.swing.JButton();
     jPB = new javax.swing.JProgressBar();
     jLabel4 = new javax.swing.JLabel();
+    jLabel5 = new javax.swing.JLabel();
+    jcbCourse = new javax.swing.JComboBox<>();
     jMenuBar1 = new javax.swing.JMenuBar();
     jmenuSetup = new javax.swing.JMenu();
     jMenuItemConfigure = new javax.swing.JMenuItem();
@@ -227,6 +234,15 @@ public class SendMarksGUI extends javax.swing.JFrame {
 
     jLabel4.setText("Progress:");
 
+    jLabel5.setText("Course");
+
+    jcbCourse.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "STATS 779", "FORSCI 703" }));
+    jcbCourse.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jcbCourseActionPerformed(evt);
+      }
+    });
+
     jmenuSetup.setText("Setup");
 
     jMenuItemConfigure.setText("Configure...");
@@ -283,7 +299,11 @@ public class SendMarksGUI extends javax.swing.JFrame {
                   .addGroup(layout.createSequentialGroup()
                     .addComponent(jLabel3)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(jcbAssignmentNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jcbAssignmentNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jLabel5)
+                    .addGap(18, 18, 18)
+                    .addComponent(jcbCourse, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                   .addComponent(jbChangeDir)
                   .addGroup(layout.createSequentialGroup()
                     .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -324,7 +344,9 @@ public class SendMarksGUI extends javax.swing.JFrame {
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
               .addComponent(jLabel3)
-              .addComponent(jcbAssignmentNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+              .addComponent(jcbAssignmentNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+              .addComponent(jLabel5)
+              .addComponent(jcbCourse, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addComponent(jbChangeDir)
             .addGap(12, 12, 12)
@@ -450,7 +472,8 @@ public class SendMarksGUI extends javax.swing.JFrame {
                                         jtfNameRange.getText(),
                                         jtfMarkRange.getText(),
                                         jtfFinalMarkRange.getText(),
-                                        (String)jcbAssignmentNumber.getSelectedItem());
+                                        (String)jcbAssignmentNumber.getSelectedItem(),
+                                        (String)jcbCourse.getSelectedItem());
      
 
     Session session = getMailSession();
@@ -510,7 +533,8 @@ public class SendMarksGUI extends javax.swing.JFrame {
       jtfNameRange.getText(),
       jtfMarkRange.getText(),
       jtfFinalMarkRange.getText(),
-      (String) jcbAssignmentNumber.getSelectedItem());
+      (String) jcbAssignmentNumber.getSelectedItem(),
+      (String)jcbCourse.getSelectedItem());
 
     JFileChooser jfc = new JFileChooser(m_strCWD);
 
@@ -565,7 +589,7 @@ public class SendMarksGUI extends javax.swing.JFrame {
   private void jcbAssignmentNumberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbAssignmentNumberActionPerformed
     StringBuilder sb = new StringBuilder();
     
-    sb.append("STATS 779 Assignment ").append(jcbAssignmentNumber.getSelectedItem()).append(" Marks");
+    sb.append((String)jcbCourse.getSelectedItem()).append(" Assignment ").append(jcbAssignmentNumber.getSelectedItem()).append(" Marks");
     jtfSubjectLine.setText(sb.toString());
     
     Preferences prefs = Preferences.userNodeForPackage(this.getClass());
@@ -769,6 +793,17 @@ public class SendMarksGUI extends javax.swing.JFrame {
     }
   }//GEN-LAST:event_jbGuessRangesActionPerformed
 
+  private void jcbCourseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbCourseActionPerformed
+    StringBuilder sb = new StringBuilder();
+    
+    sb.append((String)jcbCourse.getSelectedItem()).append(" Assignment ").append(jcbAssignmentNumber.getSelectedItem()).append(" Marks");
+    jtfSubjectLine.setText(sb.toString());
+    
+    Preferences prefs = Preferences.userNodeForPackage(this.getClass());
+    String strCourse = (String)jcbCourse.getSelectedItem();
+    prefs.put("COURSE", strCourse);
+  }//GEN-LAST:event_jcbCourseActionPerformed
+
   /**
    * @param args the command line arguments
    */
@@ -819,6 +854,7 @@ public class SendMarksGUI extends javax.swing.JFrame {
   private javax.swing.JLabel jLabel2;
   private javax.swing.JLabel jLabel3;
   private javax.swing.JLabel jLabel4;
+  private javax.swing.JLabel jLabel5;
   private javax.swing.JLabel jLabel6;
   private javax.swing.JLabel jLabel7;
   private javax.swing.JLabel jLabel8;
@@ -833,6 +869,7 @@ public class SendMarksGUI extends javax.swing.JFrame {
   private javax.swing.JButton jbScrapeGrades;
   private javax.swing.JButton jbSendMarks;
   private javax.swing.JComboBox<String> jcbAssignmentNumber;
+  private javax.swing.JComboBox<String> jcbCourse;
   private javax.swing.JCheckBox jcbDummyRun;
   private javax.swing.JComboBox<String> jcbSheetNumber;
   private javax.swing.JLabel jlabCurrentDirectory;

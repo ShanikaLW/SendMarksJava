@@ -15,13 +15,15 @@ public class SheetInfo {
   private final String strMarkRange;
   private final String strFinalMarkRange;
   private final String strAssignmentNumber;
+  private final String strCourse;
   
-  public SheetInfo(String sheetName, String nameRange, String markRange, String finalMarkRange, String assignmentNumber){
+  public SheetInfo(String sheetName, String nameRange, String markRange, String finalMarkRange, String assignmentNumber, String course){
     strSheetName = sheetName;
     strNameRange = strSheetName + "!" + nameRange;
     strMarkRange = strSheetName + "!" + markRange;
     strFinalMarkRange = strSheetName + "!" + finalMarkRange;
     strAssignmentNumber = assignmentNumber;
+    strCourse = course;
   }
   
   public String getSheetName(){
@@ -42,4 +44,8 @@ public class SheetInfo {
   public String getAssignmentNumber(){
     return strAssignmentNumber;
   } 
+  
+  public String getCourse(){
+    return strCourse;
+  }
 }
